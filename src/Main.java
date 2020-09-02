@@ -14,11 +14,47 @@ public class Main {
             arr[i] = (float)(arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
         }
         System.out.println(System.currentTimeMillis());
-        System.out.println((System.currentTimeMillis() - a));
+        double z =  (System.currentTimeMillis() - a);
+        System.out.println(z);
 
+// Действие в 2 потока
+        float[] arr1 = new float[size];
+        float[] a1 = new  float[10000000];
+        float[] a2 = new  float[10000000];
+        Object mon = new Object();
+        long t = System.currentTimeMillis();
+        System.out.println((t));
+        Thread t10 = new Thread(() -> {
 
+            synchronized (mon) {
+                System.arraycopy(arr1, 0, a1, 0, h);
+                for (int i = 0; i < a1.length; i++) {
+                    a1[i] = 1;
+                }
+                for (int i = 0; i < a1.length; i++) {
+                    a1[i] = (float)(a1[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+                }
+                System.arraycopy(a1, 0, arr1, 0, h);
+            }
 
+        });
+        Thread t15 = new Thread(() -> {
+            synchronized (mon) {
+                System.arraycopy(arr1, h, a2, 0, h);
+                for (int i = 0; i < a2.length; i++) {
+                    a2[i] = 1;
+                }
+                for (int i = 0; i < a2.length; i++) {
+                    a2[i] = (float)(a2[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+                }
+                System.arraycopy(a2, 0, arr1, h, h);
+            }
+        });
 
+        System.out.println((System.currentTimeMillis()));
+        double e = System.currentTimeMillis() - t;
+        System.out.println(e);
+        System.out.println("Вывод в 2 потока получается быстрее в " + (int) (z / e) + " раз.");
 //        MyThread t1= new MyThread("t1");
 //        MyThread t2= new MyThread("t2");
 
@@ -28,53 +64,6 @@ public class Main {
 
 //        t1.start();
 //        t2.start();
-
-        Thread t1 = new Thread(()->{
-            for (int i = 0; i < 10; i++) {
-                System.out.println(Thread.currentThread().getName() + " " + i);
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        Thread t2 = new Thread(()->{
-            for (int i = 0; i < 10; i++) {
-                System.out.println(Thread.currentThread().getName()  + " " + i);
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-        Counter c = new Counter();
-
-
-        Thread t4 = new Thread(()->{
-            for (int i = 0; i < 1000000; i++) {
-                c.inc();
-            }
-        });
-        Thread t5 = new Thread(()->{
-            for (int i = 0; i < 1000000; i++) {
-                c.dec();
-            }
-        });
-        t4.start();
-        t5.start();
-        try {
-            t4.join();
-            t5.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(c.getC());
-        System.out.println("End");
 
     }
 }
