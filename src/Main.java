@@ -41,10 +41,10 @@ public class Main {
         Thread t15 = new Thread(() -> {
             synchronized (mon) {
                 System.arraycopy(arr1, h, a2, 0, h);
-                for (int i = 0; i < a2.length; i++) {
+                for (int i = h; i < a2.length; i++) {
                     a2[i] = 1;
                 }
-                for (int i = 0; i < a2.length; i++) {
+                for (int i = h; i < a2.length; i++) {
                     a2[i] = (float)(a2[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
                 }
                 System.arraycopy(a2, 0, arr1, h, h);
